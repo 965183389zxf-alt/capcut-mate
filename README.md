@@ -190,7 +190,67 @@ curl -X POST "http://localhost:30000/openapi/capcut-mate/v1/add_videos" \
 
 ## 剪映小助手客户端
 
-剪映小助手客户端提供了桌面端的便捷操作界面，以下是启动方法：
+剪映小助手客户端是基于 Electron + React (Vite) 构建的桌面端可视化操作界面。
+
+### 前提条件
+
+- Node.js 18+（用于安装和运行客户端）
+- Python 后端服务已启动（`uv run main.py`，运行于 `http://localhost:30000`）
+
+### 首次安装
+
+进入 `desktop-client` 目录，依次执行：
+
+```bash
+cd desktop-client
+
+# 1. 安装 Electron 主进程依赖
+# Windows 用户建议先设置镜像以加速 Electron 下载
+set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
+npm install
+
+# 2. 安装 Web 前端依赖（React/Vite）
+npm run web:i
+```
+
+### 启动客户端（开发模式）
+
+客户端分为两个进程，**必须同时运行**：
+
+```bash
+# 终端 1：启动 Web 前端开发服务器（端口 9000）
+npm run web:dev
+
+# 终端 2：启动 Electron 桌面窗口
+npm start
+```
+
+> ⚠️ **注意**：必须先启动 `npm run web:dev`，再启动 `npm start`。  
+> 若先启动 Electron，页面将是空白，因为 Electron 处于开发模式时会连接 `http://localhost:9000`，需要 Vite dev server 提供页面内容。
+
+### 常见问题
+
+#### ❌ 客户端窗口打开后页面全部空白
+
+**原因**：Electron 在开发模式（未打包）下始终加载 `http://localhost:9000`，如果 Vite dev server 未启动，页面就是空白的。
+
+**解决方案**：确保 `npm run web:dev` 已在另一个终端窗口中运行，然后重新启动 Electron（`npm start`）。
+
+#### ❌ `npm install` 下载 Electron 太慢或失败
+
+**原因**：Electron 二进制包默认从 GitHub 下载，在国内网络环境下较慢。
+
+**解决方案**：设置国内镜像后再安装：
+
+```bash
+# Windows
+set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
+npm install
+
+# Linux / macOS
+export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
+npm install
+```
 
 ### macOS 沙箱权限说明
 
@@ -201,26 +261,6 @@ curl -X POST "http://localhost:30000/openapi/capcut-mate/v1/add_videos" \
 3. 确保 CapCut Mate 应用已被添加到允许列表中
 
 更多详细信息，请参阅 [macOS 沙箱权限配置指南](./docs/macos_sandbox_setup.md)。
-
-1. 安装依赖
-
-```bash
-# 切换npm镜像源 - 适用于windows
-set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
-
-# 切换yarn镜像源 - 适用于linux 或 mac
-export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
-
-# 安装依赖
-npm install --verbose
-```
-
-2. 启动项目
-
-```bash
-npm run web:dev
-npm start
-```
 
 ## 开源社区问题交流群
 - 微信群：

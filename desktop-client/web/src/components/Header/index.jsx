@@ -1,5 +1,3 @@
-import electronService from "@/services/electronService";
-
 import "./index.css";
 
 // 顶部导航组件
@@ -21,7 +19,6 @@ function TopHeader({ onTabChange, selectedTab }) {
             className={`top-nav-item`}
             onClick={() => {
               handleTabClick("download");
-              electronService.openExternalUrl("https://jcaigc.cn");
             }}
           >
             前往官网
